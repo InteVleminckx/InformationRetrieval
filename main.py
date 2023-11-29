@@ -5,4 +5,5 @@ if __name__ == '__main__':
 
     vsm = VSM(dataset)
     vsm.read_document()
-    vsm.rank_documents("fighting video game")
+
+    vsm.rank_documents("")
