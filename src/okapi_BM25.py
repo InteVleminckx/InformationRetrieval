@@ -1,7 +1,7 @@
 import pandas as pd
 import ast
 import nltk
-from gensim.summarization.bm25 import BM25 as realBM25
+from rank_bm25 import BM25Okapi as realBM25
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
