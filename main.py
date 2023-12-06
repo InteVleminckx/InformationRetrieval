@@ -1,8 +1,9 @@
 from src.data_pre_processing import DataPreProcessing
 from src.okapi_BM25 import BM25
 from src.vector_space_model import VSM
+from src.bert import BERT
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     dataset = "data/video_games.txt"
 
     data_pre_processor = DataPreProcessing()
@@ -14,3 +15,6 @@ if __name__ == '__main__':
     print("\nBM25")
     bm25 = BM25(data_pre_processor)
     bm25.rank_documents("fighting video game")
+    print("\nBERT")
+    bert = BERT(data_pre_processor)
+    bert.rank_documents("fighting video game")
