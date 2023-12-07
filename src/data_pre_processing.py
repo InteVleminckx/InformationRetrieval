@@ -1,4 +1,5 @@
 import ast
+import pickle
 
 import nltk
 import pandas as pd
@@ -75,9 +76,19 @@ def get_preprocessed_data(path):
 
         tokenized_docs_stringed.append(tokenized_document["string"])
         tokenized_docs_listed.append(tokenized_document["list"])
-        data[title] = merged_sections
+        data[title] = {
+            "text": merged_sections,
+            "tok-stringed": tokenized_document["string"],
+            "tok-listed": tokenized_document["list"]
+        }
 
     return titles, data, tokenized_docs_stringed, tokenized_docs_listed
+
+
+def get_ground_truth(path):
+    with open(path, "rb") as f:
+        binary_data = f.read()
+        return dict(pickle.loads(binary_data))
 
 
 class DataPreProcessing:

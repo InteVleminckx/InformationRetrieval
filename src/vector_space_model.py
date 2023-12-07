@@ -25,29 +25,32 @@ class VSM:
         # Uses the vocabulary and document frequencies (df) learned by fit fit_transform.
         return self.tf_idf_vectorizer.transform(query)
 
-    def rank_documents(self, query):
+    def rank_documents(self, title, k=5):
         """
         This function ranks the documents based on the cosine similarity
-        :param query: input query
+        :param title: the title of the document
         """
 
-        # Preprocess the query
-        tokenized_query = self.preprocessor.process_query(query)
-
         # Vectorize the documents and the query
-        query_vector = self.create_vector_query([tokenized_query["string"]])
+        query_vector = self.create_vector_query([self.data[title]["tok-stringed"]])
 
         # Calculate the cosine similarity
         cosine_sim = cosine_similarity(query_vector, self.vectorized_data)[0]
 
         # Sort the cosine similarities
-
         mapped = list(zip(self.preprocessor.titles, cosine_sim))
         sorted_sim = sorted(mapped, key=lambda x: x[1], reverse=True)
 
-        # Print the top 5 results
-        for i in range(5):
+        # remove searched query
+        sorted_sim = [item for item in sorted_sim if item[0] != title]
+
+        results = [sorted_sim[i][0] for i in range(k)]
+
+        # Print the top k results
+        for i in range(k):
             title, score = sorted_sim[i]
-            content = self.data[title]
+            # content = self.data[title]
             print(f"{i + 1}) Title: {title} - Score: {score}")
             # print(f"Content: {content}")
+
+        return results
