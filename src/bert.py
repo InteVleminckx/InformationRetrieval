@@ -4,7 +4,7 @@ import torch
 from src.data_pre_processing import DataPreProcessing
 
 
-class BERTSimilarity:
+class BERT:
     def __init__(self, preprocessor: DataPreProcessing):
         self.preprocessor: DataPreProcessing = preprocessor
         self.data = preprocessor.data
@@ -72,10 +72,3 @@ class BERTSimilarity:
             content = self.data[title]
             print(f"{i + 1}) Title: {title} - Score: {score}")
             # print(f"Content: {content}")
-
-
-# Example usage:
-# preprocessor = DataPreProcessing(...)  # Initialize your DataPreProcessing instance
-# bert_similarity = BERTSimilarity(preprocessor)
-# query = "Your input query here."
-# bert_similarity.rank_documents(query)
