@@ -27,51 +27,65 @@ if __name__ == "__main__":
     vsm = VSM(data_pre_processor)
     result = vsm.rank_documents(document_name, k=15)
 
+    averagePrecisionVSM = 0
     total_match = 0
     for doc in ground_truth[document_name]:
         if doc in result:
             total_match += 1
+            averagePrecisionVSM += total_match/(result.index(doc)+1)
     recall = (
         total_match / sum(len(related_games) for related_games in ground_truth.values())
         if len(ground_truth) > 0
         else 0
     )
+    averagePrecisionVSM = averagePrecisionVSM/total_match
 
     print(f"VSM precision: {total_match / len(result):4f}")
     print(f"VSM recall: {recall:4f}")
+    print(f"VSM Average Precision: {averagePrecisionVSM}")
 
     print("\nBM25")
     bm25 = BM25(data_pre_processor)
     result = bm25.rank_documents(document_name, k=15)
 
+    averagePrecisionBM = 0
     total_match = 0
     for doc in ground_truth[document_name]:
         if doc in result:
             total_match += 1
+            averagePrecisionBM += total_match/(result.index(doc)+1)
 
     recall = (
         total_match / sum(len(related_games) for related_games in ground_truth.values())
         if len(ground_truth) > 0
         else 0
     )
+    averagePrecisionBM = averagePrecisionBM/total_match
 
     print(f"BM25 precision: {total_match / len(result):.4f}")
     print(f"BM25 recall: {recall:4f}")
+    print(f"BM25 Average Precision: {averagePrecisionBM}")
 
     print("\nBERT")
     bert = BERT(data_pre_processor)
     result = bert.rank_documents(document_name, k=15)
 
+    averagePrecisionBERT = 0
+    counterBERT = 0
     total_match = 0
     for doc in ground_truth[document_name]:
+        counterBERT += 1
         if doc in result:
             total_match += 1
+            averagePrecisionBERT += total_match/(result.index(doc)+1)
 
     recall = (
         total_match / sum(len(related_games) for related_games in ground_truth.values())
         if len(ground_truth) > 0
         else 0
     )
+    averagePrecisionBERT = averagePrecisionBERT/total_match
 
     print(f"BERT precision: {total_match / len(result):.4f}")
     print(f"BERT recall: {recall:4f}")
+    print(f"BERT Average Precision: {averagePrecisionBERT}")
