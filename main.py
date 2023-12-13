@@ -32,13 +32,13 @@ if __name__ == "__main__":
     for doc in ground_truth[document_name]:
         if doc in result:
             total_match += 1
-            averagePrecisionVSM += total_match/(result.index(doc)+1)
+            averagePrecisionVSM += total_match / (result.index(doc) + 1)
     recall = (
         total_match / sum(len(related_games) for related_games in ground_truth.values())
         if len(ground_truth) > 0
         else 0
     )
-    averagePrecisionVSM = averagePrecisionVSM/total_match
+    averagePrecisionVSM = averagePrecisionVSM / total_match
 
     print(f"VSM precision: {total_match / len(result):4f}")
     print(f"VSM recall: {recall:4f}")
@@ -53,14 +53,14 @@ if __name__ == "__main__":
     for doc in ground_truth[document_name]:
         if doc in result:
             total_match += 1
-            averagePrecisionBM += total_match/(result.index(doc)+1)
+            averagePrecisionBM += total_match / (result.index(doc) + 1)
 
     recall = (
         total_match / sum(len(related_games) for related_games in ground_truth.values())
         if len(ground_truth) > 0
         else 0
     )
-    averagePrecisionBM = averagePrecisionBM/total_match
+    averagePrecisionBM = averagePrecisionBM / total_match
 
     print(f"BM25 precision: {total_match / len(result):.4f}")
     print(f"BM25 recall: {recall:4f}")
@@ -68,6 +68,7 @@ if __name__ == "__main__":
 
     print("\nBERT")
     bert = BERT(data_pre_processor)
+    bert.parallel_encode_documents(num_processes=3)
     result = bert.rank_documents(document_name, k=15)
 
     averagePrecisionBERT = 0
@@ -77,14 +78,14 @@ if __name__ == "__main__":
         counterBERT += 1
         if doc in result:
             total_match += 1
-            averagePrecisionBERT += total_match/(result.index(doc)+1)
+            averagePrecisionBERT += total_match / (result.index(doc) + 1)
 
     recall = (
         total_match / sum(len(related_games) for related_games in ground_truth.values())
         if len(ground_truth) > 0
         else 0
     )
-    averagePrecisionBERT = averagePrecisionBERT/total_match
+    averagePrecisionBERT = averagePrecisionBERT / total_match
 
     print(f"BERT precision: {total_match / len(result):.4f}")
     print(f"BERT recall: {recall:4f}")
