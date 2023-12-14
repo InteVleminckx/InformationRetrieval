@@ -1,14 +1,15 @@
 from rank_bm25 import BM25Okapi
 
-from src.data_pre_processing import DataPreProcessing
+from src.data_pre_processor import DataPreProcessor
+from src.utils import *
 
 
 class BM25:
 
-    def __init__(self, preprocessor: DataPreProcessing):
-        self.preprocessor: DataPreProcessing = preprocessor
-        self.data = preprocessor.data
-        self.bm25Okapi = BM25Okapi(preprocessor.tokenized_documents_listed)
+    def __init__(self, preprocessor: DataPreProcessor, renewed=False):
+        self.preprocessor: DataPreProcessor = preprocessor
+        self.data = preprocessor.preprocessed_data
+        self.bm25Okapi = BM25Okapi(self.preprocessor.docs_l_tokenized)
 
     def rank_documents(self, title, k=5):
         """
@@ -16,7 +17,7 @@ class BM25:
         :param title: the title of the document
         """
 
-        scores = self.bm25Okapi.get_scores(self.data[title]["tok-listed"])
+        scores = self.bm25Okapi.get_scores(self.data[title]["list"])
 
         # Sort the RSV
         mapped = list(zip(self.preprocessor.titles, scores))

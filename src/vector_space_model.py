@@ -1,16 +1,16 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from src.data_pre_processing import DataPreProcessing
+from src.data_pre_processor import DataPreProcessor
 
 
 class VSM:
 
-    def __init__(self, preprocessor: DataPreProcessing):
-        self.preprocessor: DataPreProcessing = preprocessor
-        self.data = preprocessor.data
+    def __init__(self, preprocessor: DataPreProcessor, renewed=False):
+        self.preprocessor: DataPreProcessor = preprocessor
+        self.data = preprocessor.preprocessed_data
         self.tf_idf_vectorizer = TfidfVectorizer()
-        self.vectorized_data = self.create_vector_documents(preprocessor.tokenized_documents_stringed)
+        self.vectorized_data = self.create_vector_documents(self.preprocessor.docs_s_tokenized)
 
     def create_vector_documents(self, data):
         """
@@ -32,7 +32,7 @@ class VSM:
         """
 
         # Vectorize the documents and the query
-        query_vector = self.create_vector_query([self.data[title]["tok-stringed"]])
+        query_vector = self.create_vector_query([self.data[title]["string"]])
 
         # Calculate the cosine similarity
         cosine_sim = cosine_similarity(query_vector, self.vectorized_data)[0]

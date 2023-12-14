@@ -1,5 +1,5 @@
 from sklearn.metrics.pairwise import cosine_similarity
-from src.data_pre_processing import DataPreProcessing
+from src.data_pre_processor import DataPreProcessor
 from sentence_transformers import SentenceTransformer
 import pickle
 import subprocess
@@ -8,12 +8,12 @@ import multiprocessing
 
 
 class BERT:
-    def __init__(self, preprocessor: DataPreProcessing):
+    def __init__(self, preprocessor: DataPreProcessor):
         self.preprocessor = preprocessor
-        self.data = preprocessor.data
+        self.data = preprocessor.preprocessed_data
         self.num_processes = 4
         self.documents_per_process = (
-            len(self.preprocessor.tokenized_documents_stringed) // self.num_processes
+            len(self.preprocessor.docs_s_tokenized) // self.num_processes
         )
         self.model = SentenceTransformer(
             "sentence-transformers/bert-base-nli-mean-tokens"
@@ -40,7 +40,7 @@ class BERT:
                     if i != num_processes - 1
                     else None
                 )
-                sublist = self.preprocessor.tokenized_documents_stringed[
+                sublist = self.preprocessor.docs_s_tokenized[
                     start_idx:end_idx
                 ]
 
@@ -76,7 +76,7 @@ class BERT:
             print("All embeddings saved to a single pickle file.")
 
     def rank_documents(self, title: str, k=5):
-        title_sentence = self.data[title]["tok-stringed"]
+        title_sentence = self.data[title]["string"]
         title_embedding = self.model.encode(
             sentences=title_sentence, show_progress_bar=False
         )
