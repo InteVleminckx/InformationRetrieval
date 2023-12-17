@@ -42,7 +42,7 @@ class DataPreProcessor:
         self.docs_l_tokenized = []
 
     def preprocess_data(self):
-
+        count = 0
         for index, row in self.df.iterrows():
             title = row['Title']
             sections = row['Sections']
@@ -54,6 +54,11 @@ class DataPreProcessor:
             self.preprocessed_data[title] = doc_tokenized
             self.docs_s_tokenized.append(doc_tokenized['string'])
             self.docs_l_tokenized.append(doc_tokenized['list'])
+
+            count += 1
+
+            if count % 1000 == 0:
+                print(count)
 
     def merge_sections_to_document(self, title, sections):
         self.data_set[title] = ''
@@ -92,3 +97,10 @@ class DataPreProcessor:
                 tokenized_doc['list'].append(word)
 
         return tokenized_doc
+
+
+# if __name__ == "__main__":
+#     data = DataPreProcessor("data/video_games.txt")
+#     print("start")
+#     data.preprocess_data()
+#     print("end")
