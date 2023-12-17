@@ -27,7 +27,7 @@ def get_preprocessed_data(dataset):
     renewed = False
     if not data_preprocessor:
         renewed = True
-        data_preprocessor = DataPreProcessor(dataset)
+        data_preprocessor = DataPreProcessor(f'data/{dataset}')
         data_preprocessor.preprocess_data()
         save_to_pickle(f'preprocessed_data_{dataset_name}', data_preprocessor)
 

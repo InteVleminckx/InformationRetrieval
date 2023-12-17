@@ -5,6 +5,32 @@
     <title>Video games</title>
 </head>
 <body>
+<div>
+    <input type="search" id="searchBar" placeholder="Type or choose title...">
+    <button>Retrieve</button>
+</div>
+<div id = 'available_titles'>
+    <table id='titles_table'>
+        <tr><th>\"Title"</th></tr>
+
+    </table>
+</div>
+
+<script>
+    let bodyTable = "<tr><th>\"Title</th></tr>";
+    var flaskData = {{ data|tojson }};
+    console.log(flaskData.titles);
+    for (let i = 0; i < flaskData.titles.length; i++) {
+        bodyTable += "<tr><td onclick =\"chooseTitle(this)\">"+ flaskData.titles[i] + "</td></tr>"
+    }
+    document.getElementById('titles_table').innerHTML = bodyTable;
+
+
+    function chooseTitle(x) {
+        document.getElementById("searchBar").value = x.innerHTML
+    }
+</script>
+
 
 </body>
 </html>
