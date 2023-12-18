@@ -1,0 +1,13 @@
+table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+tr:nth-child(even) {
+    background-color: #D6EEEE;
+  }
+
+tr:hover {
+    background-color: #ffff99;
+  }

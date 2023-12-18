@@ -22,15 +22,13 @@ def statistics():
     
     vsm = VSM(data_preprocessor, renewed=renewed)
     bm25 = BM25(data_preprocessor, renewed=renewed)
-    # bert = BERT(data_preprocessor)
-    # bert.parallel_encode_documents(num_processes=2)
+    #
 
     resultVSM = vsm.rank_documents(queryTitle, k=5)
     resultBM = bm25.rank_documents(queryTitle, k=5)
-    #print(resultVSM, flush=True)
-    #print(resultBM, flush=True)
+
     #resultBERT = bert.rank_documents(queryTitle, k=15)
-    resultBERT = ["lol", "bitch"]
+    resultBERT = ["lol", "bitch", "yeet", "jezus", "mozes"]
 
     s_resVSM = '#'.join(resultVSM)
 
@@ -42,9 +40,6 @@ def retrieved():
     vms_res = request.args.get('VSM_res').split('#')
     bm_res = request.args.get('BM_res').split('#')
     bert_res = request.args.get('BERT_res').split('#')
-
-    print(vms_res, flush=True)
-    print(bm_res, flush=True)
 
     data = {
         "vms_res": vms_res,

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Video games</title>
-    <link href="templates/style.css" rel="stylesheet" />
+    <link href="/static/style.css" rel="stylesheet" />
 </head>
 <body>
 <div>
@@ -12,14 +12,14 @@
 </div>
 <div id = 'available_titles'>
     <table id='titles_table'>
-        <tr><th>\"Title"</th></tr>
+        <tr><th>\Title</th></tr>
 
     </table>
 </div>
 
 <script>
     // Loading all game titles 
-    let bodyTable = "<tr><th>\"Title</th></tr>";
+    let bodyTable = "<tr><th>Title</th></tr>";
     var flaskData = {{ data|tojson }};
     console.log(flaskData.titles);
     for (let i = 0; i < flaskData.titles.length; i++) {
@@ -48,9 +48,14 @@
                 title: document.getElementById("searchBar").value
             }),
             }).then(response => {
+                //setTimeout(changePage(response), 3000)
                 window.location.href = response.url; //redirecting to retrieved page
             })
 
+    }
+
+    function changePage(x){
+        window.location.href = x.url;
     }
 </script>
 
