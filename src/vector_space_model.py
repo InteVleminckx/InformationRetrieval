@@ -6,7 +6,7 @@ from src.data_pre_processor import DataPreProcessor
 
 class VSM:
 
-    def __init__(self, preprocessor: DataPreProcessor, renewed=False):
+    def __init__(self, preprocessor: DataPreProcessor):
         self.preprocessor: DataPreProcessor = preprocessor
         self.data = preprocessor.preprocessed_data
         self.tf_idf_vectorizer = TfidfVectorizer()
@@ -31,8 +31,10 @@ class VSM:
         :param title: the title of the document
         """
 
-        # Vectorize the documents and the query
-        query_vector = self.create_vector_query([self.data[title]["string"]])
+        lowered_title = title.lower()
+
+        # Vectorize the document of the given title
+        query_vector = self.create_vector_query([self.data[lowered_title]["string"]])
 
         # Calculate the cosine similarity
         cosine_sim = cosine_similarity(query_vector, self.vectorized_data)[0]
@@ -44,13 +46,13 @@ class VSM:
         # remove searched query
         sorted_sim = [item for item in sorted_sim if item[0] != title]
 
-        results = [sorted_sim[i][0] for i in range(k)]
+        results = [sorted_sim[i][0] for i in range(min(k, len(sorted_sim)))]
 
         # Print the top k results
-        for i in range(k):
+        for i in range(min(k, len(results))):
             title, score = sorted_sim[i]
             # content = self.data[title]
-            print(f"{i + 1}) Title: {title} - Score: {score}")
+            # print(f"{i + 1}) Title: {title} - Score: {score}")
             # print(f"Content: {content}")
 
         return results

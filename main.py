@@ -12,22 +12,22 @@ from src.utils import *
 if __name__ == "__main__":
     # multiprocessing.set_start_method("spawn", force=True)
 
-    dataset = "data/video_games.txt"
-    gtl = "data/ground-truth.gt"
-    document_name = "Mafia III"
-
-    data_preprocessor, renewed = get_preprocessed_data(dataset)
-    ground_truth = get_ground_truth(gtl)
-
-    if document_name not in data_preprocessor.titles:
-        print(f"Document '{document_name}' doesn't exists.")
-        sys.exit(1)
-
-    print("VSM")
-    vsm = VSM(data_preprocessor, renewed=renewed)
-    result = vsm.rank_documents(document_name, k=15)
-    pprint.pprint(evaluate(result, ground_truth, document_name))
+    dataset = "data/video_games_short.txt"
+    # gtl = "data/ground-truth.gt"
+    # document_name = "Mafia III"
     #
+    # data_preprocessor, renewed = get_preprocessed_data(dataset)
+    # ground_truth = get_ground_truth(gtl)
+    #
+    # if document_name not in data_preprocessor.titles:
+    #     print(f"Document '{document_name}' doesn't exists.")
+    #     sys.exit(1)
+    #
+    # print("VSM")
+    # vsm = VSM(data_preprocessor, renewed=renewed)
+    # result = vsm.rank_documents(document_name, k=15)
+    # pprint.pprint(evaluate(result, ground_truth, document_name))
+    # #
     # print("\nBM25")
     # bm25 = BM25(data_preprocessor, renewed=renewed)
     # result = bm25.rank_documents(document_name, k=15)
@@ -60,3 +60,10 @@ if __name__ == "__main__":
     # print(f"BERT Average Precision: {averagePrecisionBERT}")
     # end = time.time() - start
     # print(f"\nElapsed Time: {end // 60:.0f} minutes {end % 60:.2f} seconds")
+
+    import os
+    from src.data_pre_processor import DataPreProcessor
+    cwd = os.getcwd()
+    data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
+    vsm = BM25(data_preprocessor)
+    result = vsm.rank_documents("Om Nom: Run", k=15)

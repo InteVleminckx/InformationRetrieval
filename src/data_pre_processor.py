@@ -1,10 +1,7 @@
 import ast
+import ctypes
 
-import nltk
 import pandas as pd
-from nltk.corpus import stopwords
-from nltk.stem import SnowballStemmer
-from nltk.tokenize import word_tokenize
 
 
 def safe_eval(text):
@@ -20,87 +17,175 @@ def safe_eval(text):
         return text
 
 
+# class DataPreProcessor:
+#     for data in ['tokenizers/punkt', 'corpora/stopwords']:
+#         try:
+#             nltk.data.find(data)
+#         except:
+#             nltk.download(data.split('/')[1])
+#
+#     def __init__(self, dataset_path: str):
+#         self.df = pd.read_csv(dataset_path)
+#         self.stemmer = SnowballStemmer('english')
+#         self.stopwords = set(stopwords.words('english'))
+#
+#         self.titles = self.df['Title'].to_list()
+#         self.df['Sections'] = self.df['Sections'].apply(safe_eval)
+#
+#         self.data_set = {}
+#
+#         self.preprocessed_data = {}
+#         self.docs_s_tokenized = []
+#         self.docs_l_tokenized = []
+#
+#     def preprocess_data(self):
+#         count = 0
+#         for index, row in self.df.iterrows():
+#             title = row['Title']
+#             sections = row['Sections']
+#
+#             document = self.merge_sections_to_document(title, sections)
+#             doc_clean = self.cleanup_document(document)
+#             doc_tokenized = self.tokenize_document(doc_clean)
+#
+#             self.preprocessed_data[title] = doc_tokenized
+#             self.docs_s_tokenized.append(doc_tokenized['string'])
+#             self.docs_l_tokenized.append(doc_tokenized['list'])
+#
+#             count += 1
+#
+#             if count % 1000 == 0:
+#                 print(count)
+#
+#     def merge_sections_to_document(self, title, sections):
+#         self.data_set[title] = ''
+#
+#         for i, section in enumerate(sections):
+#             header, paragraph = section[0] if i > 0 else title, section[1]
+#             self.data_set[title] += f"{header}\n{paragraph}"
+#
+#         return self.data_set[title]
+#
+#     @staticmethod
+#     def cleanup_document(document):
+#         return (document
+#                 .replace(r'\\u', r'\u')
+#                 .replace('\n', ' ')
+#                 .replace(',', '')
+#                 .replace('.', '')
+#                 .encode('utf-8', 'ignore')
+#                 .decode('utf-8')
+#                 .lower()
+#                 )
+#
+#     def tokenize_document(self, document):
+#
+#         tokens = word_tokenize(document)
+#
+#         tokenized_doc = {
+#             'string': '',
+#             'list': []
+#         }
+#
+#         for word in tokens:
+#             if word not in self.stopwords:
+#                 word = self.stemmer.stem(word)
+#                 tokenized_doc['string'] += f' {word}'
+#                 tokenized_doc['list'].append(word)
+#
+#         return tokenized_doc
+
+
 class DataPreProcessor:
-    for data in ['tokenizers/punkt', 'corpora/stopwords']:
-        try:
-            nltk.data.find(data)
-        except:
-            nltk.download(data.split('/')[1])
 
-    def __init__(self, dataset_path: str):
-        self.df = pd.read_csv(dataset_path)
-        self.stemmer = SnowballStemmer('english')
-        self.stopwords = set(stopwords.words('english'))
-
-        self.titles = self.df['Title'].to_list()
-        self.df['Sections'] = self.df['Sections'].apply(safe_eval)
-
-        self.data_set = {}
+    def __init__(self, input_file, cwd):
 
         self.preprocessed_data = {}
         self.docs_s_tokenized = []
         self.docs_l_tokenized = []
+        self.titles = []
+        self.data_set = {}
+        self.preprocess_done = False
+        self.preprocess(input_file, 'data/lowered_input.csv', cwd)
 
-    def preprocess_data(self):
-        count = 0
-        for index, row in self.df.iterrows():
-            title = row['Title']
-            sections = row['Sections']
+    def extract_data(self, dataset, output_file):
 
-            document = self.merge_sections_to_document(title, sections)
-            doc_clean = self.cleanup_document(document)
-            doc_tokenized = self.tokenize_document(doc_clean)
+        df = pd.read_csv(dataset)
+        self.titles = df['Title'].to_list()
+        df['Sections'] = df['Sections'].apply(safe_eval)
 
-            self.preprocessed_data[title] = doc_tokenized
-            self.docs_s_tokenized.append(doc_tokenized['string'])
-            self.docs_l_tokenized.append(doc_tokenized['list'])
+        with open(output_file, 'w') as output:
+            for i, (title, sections) in df.iterrows():
+                self.data_set[title] = ''
 
-            count += 1
+                document = ""
 
-            if count % 1000 == 0:
-                print(count)
+                for i, section in enumerate(sections):
+                    header, paragraph = section[0] if i > 0 else title, section[1]
+                    self.data_set[title] += f"{header}\n{paragraph}"
+                    document += paragraph.encode('utf-8', 'ignore').decode().lower()
 
-    def merge_sections_to_document(self, title, sections):
-        self.data_set[title] = ''
+                document = document.replace("\n", "")
 
-        for i, section in enumerate(sections):
-            header, paragraph = section[0] if i > 0 else title, section[1]
-            self.data_set[title] += f"{header}\n{paragraph}"
+                output.write(f'{title.lower()}, {document}\n')
 
-        return self.data_set[title]
+    def preprocess(self, input_file, output_file, cwd):
 
-    @staticmethod
-    def cleanup_document(document):
-        return (document
-                .replace(r'\\u', r'\u')
-                .replace('\n', ' ')
-                .replace(',', '')
-                .replace('.', '')
-                .encode('utf-8', 'ignore')
-                .decode('utf-8')
-                .lower()
-                )
+        self.extract_data(input_file, output_file)
 
-    def tokenize_document(self, document):
+        output_file = f"{cwd}/{output_file}"
+        with open(input_file, 'r') as input:
+            with open(output_file, 'w') as output:
+                for line in input.readlines():
+                    # Already lowering the text, because this can be done faster here than in c++
+                    line = line.lower()
+                    output.write(line)
 
-        tokens = word_tokenize(document)
+        new_input_file = output_file
+        output_file = f"{cwd}/{'data/preprocessed.csv'}"
+        num_processes = 10
 
-        tokenized_doc = {
-            'string': '',
-            'list': []
-        }
+        # Load C++ preprocess library
+        lib = ctypes.CDLL(f"{cwd}/src/data_preprocessor/dpp.so")
 
-        for word in tokens:
-            if word not in self.stopwords:
-                word = self.stemmer.stem(word)
-                tokenized_doc['string'] += f' {word}'
-                tokenized_doc['list'].append(word)
+        # Define the function signature
+        lib.dpp.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int]
 
-        return tokenized_doc
+        # Perform the c++ function
+        lib.dpp(ctypes.c_char_p(new_input_file.encode('utf-8')), ctypes.c_char_p(output_file.encode('utf-8')),
+                num_processes)
 
+        with open(output_file, 'rb') as f:
+            for line in f.readlines():
+                line = line.decode('utf-8', 'ignore')
+                line = line.split(',')
 
-# if __name__ == "__main__":
-#     data = DataPreProcessor("data/video_games.txt")
-#     print("start")
-#     data.preprocess_data()
-#     print("end")
+                # If the title contains comma's, merge the title back to gather
+                if len(line) > 2:
+                    new_line = ["", ""]
+                    for i, part in enumerate(line):
+                        if i == len(line) - 1:
+                            # Remove last added comma
+                            new_line[0] = new_line[0][:-1]
+                            new_line[1] = part
+                        else:
+                            new_line[0] += part + ","
+                    line = new_line
+                self.docs_s_tokenized.append(line[1])
+                self.docs_l_tokenized.append(line[1].split(' '))
+                self.preprocessed_data[line[0]] = {
+                    "string": self.docs_s_tokenized[-1],
+                    "list": self.docs_l_tokenized[-1]
+                }
+
+        new_order = [None] * len(self.preprocessed_data)
+
+        indices = list(self.preprocessed_data.keys())
+
+        # Reorder the titles in the same order as preprocessed_data is saved
+        for title in self.titles:
+            pos = indices.index(title.lower())
+            new_order[pos] = title
+
+        self.titles = new_order
+        self.preprocess_done = True

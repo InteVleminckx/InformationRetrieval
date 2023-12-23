@@ -1,3 +1,5 @@
+import time
+
 from flask import Flask, request
 from flask import render_template, redirect, url_for, jsonify, make_response
 from flask import json
@@ -7,10 +9,13 @@ from src.okapi_BM25 import BM25
 from src.vector_space_model import VSM
 
 from src.utils import *
+import os
 
 app = Flask(__name__)
 
-data_preprocessor, renewed = get_preprocessed_data("video_games.txt")
+dataset = "data/video_games.txt"
+cwd = os.getcwd()
+data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
 
 
 @app.route('/retrieval', methods = ['POST'])
@@ -18,11 +23,9 @@ def statistics():
     global data_preprocessor
     global renewed
     queryTitle = request.get_json()['title']
-    print(queryTitle, flush = True)
-    
-    vsm = VSM(data_preprocessor, renewed=renewed)
-    bm25 = BM25(data_preprocessor, renewed=renewed)
-    #
+
+    vsm = VSM(data_preprocessor)
+    bm25 = BM25(data_preprocessor)
 
     resultVSM = vsm.rank_documents(queryTitle, k=5)
     resultBM = bm25.rank_documents(queryTitle, k=5)
