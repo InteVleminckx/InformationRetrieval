@@ -18,19 +18,19 @@ def statistics():
     global data_preprocessor
     global renewed
     queryTitle = request.get_json()['title']
+    topK = int(request.get_json()['topK'])
     print(queryTitle, flush = True)
     
     vsm = VSM(data_preprocessor, renewed=renewed)
     bm25 = BM25(data_preprocessor, renewed=renewed)
-    #
+    #bert = BERT(data_preprocessor)
+    #bert.parallel_encode_documents(num_processes=2)
 
-    resultVSM = vsm.rank_documents(queryTitle, k=5)
-    resultBM = bm25.rank_documents(queryTitle, k=5)
+    resultVSM = vsm.rank_documents(queryTitle, k=topK)
+    resultBM = bm25.rank_documents(queryTitle, k=topK)
 
     #resultBERT = bert.rank_documents(queryTitle, k=15)
     resultBERT = ["lol", "bitch", "yeet", "jezus", "mozes"]
-
-    s_resVSM = '#'.join(resultVSM)
 
     return redirect(url_for('retrieved', VSM_res = '#'.join(resultVSM), BM_res = '#'.join(resultBM), BERT_res = '#'.join(resultBERT)), code= 302)
 
