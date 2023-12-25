@@ -1,3 +1,5 @@
+import time
+
 from flask import Flask, request
 from flask import render_template, redirect, url_for, jsonify, make_response
 from flask import json
@@ -7,10 +9,13 @@ from src.okapi_BM25 import BM25
 from src.vector_space_model import VSM
 
 from src.utils import *
+import os
 
 app = Flask(__name__)
 
-data_preprocessor, renewed = get_preprocessed_data("video_games.txt")
+dataset = "data/video_games.txt"
+cwd = os.getcwd()
+data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
 
 
 @app.route('/retrieval', methods = ['POST'])

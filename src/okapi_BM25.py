@@ -6,7 +6,7 @@ from src.utils import *
 
 class BM25:
 
-    def __init__(self, preprocessor: DataPreProcessor, renewed=False):
+    def __init__(self, preprocessor: DataPreProcessor):
         self.preprocessor: DataPreProcessor = preprocessor
         self.data = preprocessor.preprocessed_data
         self.bm25Okapi = BM25Okapi(self.preprocessor.docs_l_tokenized)
@@ -16,8 +16,8 @@ class BM25:
         This function ranks the documents based on the cosine similarity
         :param title: the title of the document
         """
-
-        scores = self.bm25Okapi.get_scores(self.data[title]["list"])
+        lowered_title = title.lower()
+        scores = self.bm25Okapi.get_scores(self.data[lowered_title]["list"])
 
         # Sort the RSV
         mapped = list(zip(self.preprocessor.titles, scores))
@@ -26,13 +26,13 @@ class BM25:
         # remove searched query
         sorted_sim = [item for item in sorted_sim if item[0] != title]
 
-        results = [sorted_sim[i][0] for i in range(k)]
+        results = [sorted_sim[i][0] for i in  range(min(k, len(sorted_sim)))]
 
         # Print the top k results
-        for i in range(k):
+        for i in range(min(k, len(results))):
             title, score = sorted_sim[i]
             # content = self.data[title]
-            print(f"{i + 1}) Title: {title} - Score: {score}")
+            # print(f"{i + 1}) Title: {title} - Score: {score}")
             # print(f"Content: {content}")
 
         return results
