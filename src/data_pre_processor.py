@@ -155,7 +155,7 @@ class DataPreProcessor:
 
         try:
 
-            os.chdir(f"{cwd}/src/data_preprocessor")
+            os.chdir(f"src/data_preprocessor")
             # Get return value of the cpp code
             result = subprocess.run(f"./dpp {new_input_file} {output_file} {num_processes}", stdout=subprocess.PIPE,
                                     shell=True, text=True)
