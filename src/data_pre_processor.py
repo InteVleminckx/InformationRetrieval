@@ -1,5 +1,8 @@
 import ast
 import ctypes
+import os
+import subprocess
+import sys
 
 import pandas as pd
 
@@ -145,15 +148,26 @@ class DataPreProcessor:
         output_file = f"{cwd}/{'data/preprocessed.csv'}"
         num_processes = 10
 
-        # Load C++ preprocess library
-        lib = ctypes.CDLL(f"{cwd}/src/data_preprocessor/dpp.so")
+        exec_path = f"{cwd}/src/data_preprocessor/dpp"
 
-        # Define the function signature
-        lib.dpp.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int]
+        # Compile cpp file
+        os.system(f"g++ -o {exec_path} {exec_path}.cpp")
 
-        # Perform the c++ function
-        lib.dpp(ctypes.c_char_p(new_input_file.encode('utf-8')), ctypes.c_char_p(output_file.encode('utf-8')),
-                num_processes)
+        try:
+
+            os.chdir("src/data_preprocessor")
+            # Get return value of the cpp code
+            result = subprocess.run(f"./dpp {new_input_file} {output_file} {num_processes}", stdout=subprocess.PIPE,
+                                    shell=True, text=True)
+            os.chdir("../..")
+
+            if str(result.returncode) == "1":
+                print("Error: there occurred an error during preprocessing the data in C++")
+                sys.exit(1)
+
+        except Exception as e:
+            print(e)
+            sys.exit(1)
 
         with open(output_file, 'rb') as f:
             for line in f.readlines():

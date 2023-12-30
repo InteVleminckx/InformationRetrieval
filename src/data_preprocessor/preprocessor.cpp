@@ -131,6 +131,6 @@ void preprocess_data(const char *input_file, const char *output_file, const int 
 
 }
 
-int main() {
-    preprocess_data("../../data/lowered_input.csv", "../../data/pps.csv", 10);
-}
+//int main() {
+//    preprocess_data("../../data/lowered_input.csv", "../../data/pps.csv", 10);
+//}
