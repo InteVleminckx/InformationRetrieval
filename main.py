@@ -13,7 +13,7 @@ if __name__ == "__main__":
     # multiprocessing.set_start_method("spawn", force=True)
 
     dataset = "data/video_games.txt"
-    # gtl = "data/ground-truth.gt"
+    # gtl = "data/ground-truth.ground-truth.gt"
     # document_name = "Mafia III"
     #
     # data_preprocessor, renewed = get_preprocessed_data(dataset)

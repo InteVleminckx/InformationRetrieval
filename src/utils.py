@@ -49,16 +49,15 @@ def evaluate(result, ground_truth_labels, query_doc):
             avg_precision += total_match / (result.index(doc) + 1)
 
     return {
-        "recall": calculate_recall(total_match, ground_truth_labels),
+        "recall": calculate_recall(total_match, ground_truth_labels, query_doc),
         "precision": calculate_precision(total_match, result),
         "AP": calculate_avg_precision(avg_precision, total_match)
     }
 
 
-def calculate_recall(total_match, gtl):
+def calculate_recall(total_match, gtl, query_doc):
     return round((
-        total_match / sum(len(related_games) for related_games in gtl.values())
-        if len(gtl) > 0 else 0
+        total_match / len(gtl[query_doc]) if len(gtl[query_doc]) > 0 else 0.0
     ), 4)
 
 
@@ -67,4 +66,5 @@ def calculate_precision(total_match, result):
 
 
 def calculate_avg_precision(avg_pre, total_match):
+    if total_match == 0: return 0.0
     return round(avg_pre / total_match, 4)

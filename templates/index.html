@@ -9,19 +9,20 @@
 <div>
     <input type="search" id="searchBar" placeholder="Type or choose title...">
     <button onclick="queryTitle(this)">Retrieve</button>
+    <input type="number" id="topK" value="5">
 </div>
 <div id = 'available_titles'>
     <table id='titles_table'>
         <tr><th>\Title</th></tr>
-
     </table>
+    <h3 id="title_selected"></h3>
+    <p id="game_info" align="left" ></p>
 </div>
 
 <script>
     // Loading all game titles 
     let bodyTable = "<tr><th>Title</th></tr>";
     var flaskData = {{ data|tojson }};
-    console.log(flaskData.titles);
     for (let i = 0; i < flaskData.titles.length; i++) {
         bodyTable += "<tr><td onclick =\"chooseTitle(this)\">"+ flaskData.titles[i] + "</td></tr>"
     }
@@ -30,7 +31,9 @@
     
     //function to use selected title as query
     function chooseTitle(x) {
-        document.getElementById("searchBar").value = x.innerHTML
+        document.getElementById("searchBar").value = x.innerHTML;
+        document.getElementById("game_info").innerHTML =  flaskData.data_set[x.innerHTML];
+        document.getElementById("title_selected").innerHTML = x.innerHTML;
     }
 
     async function queryTitle(x) {
@@ -45,7 +48,8 @@
                 // 'Content-Type': 'application/x-www-form-urlencoded',
                 },
             body:JSON.stringify({
-                title: document.getElementById("searchBar").value
+                title: document.getElementById("searchBar").value,
+                topK: document.getElementById("topK").value
             }),
             }).then(response => {
                 //setTimeout(changePage(response), 3000)

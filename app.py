@@ -16,18 +16,16 @@ app = Flask(__name__)
 dataset = "data/video_games.txt"
 cwd = os.getcwd()
 data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
-
+groundTruthLabels = get_ground_truth(f"{cwd}/data/ground-truth.gt")
 
 @app.route('/retrieval', methods = ['POST'])
 def statistics():
     global data_preprocessor
-    global renewed
     queryTitle = request.get_json()['title']
     topK = int(request.get_json()['topK'])
-    print(queryTitle, flush = True)
-    
-    vsm = VSM(data_preprocessor, renewed=renewed)
-    bm25 = BM25(data_preprocessor, renewed=renewed)
+
+    vsm = VSM(data_preprocessor)
+    bm25 = BM25(data_preprocessor)
     #bert = BERT(data_preprocessor)
     #bert.parallel_encode_documents(num_processes=2)
 
@@ -37,19 +35,30 @@ def statistics():
     #resultBERT = bert.rank_documents(queryTitle, k=15)
     resultBERT = ["lol", "bitch", "yeet", "jezus", "mozes"]
 
-    return redirect(url_for('retrieved', VSM_res = '#'.join(resultVSM), BM_res = '#'.join(resultBM), BERT_res = '#'.join(resultBERT)), code= 302)
+    return redirect(url_for('retrieved', VSM_res = '#'.join(resultVSM), BM_res = '#'.join(resultBM), BERT_res =
+    '#'.join(resultBERT), title = queryTitle), code= 302)
 
 @app.route('/retrieved/')
 def retrieved():
-
+    global groundTruthLabels
     vms_res = request.args.get('VSM_res').split('#')
     bm_res = request.args.get('BM_res').split('#')
     bert_res = request.args.get('BERT_res').split('#')
+    queryTitle = request.args.get('title')
+
+
+    evalVSM = evaluate(vms_res, groundTruthLabels, queryTitle)
+    evalBM25 = evaluate(bm_res, groundTruthLabels, queryTitle)
+    evalBERT = evaluate(bert_res, groundTruthLabels, queryTitle)
 
     data = {
         "vms_res": vms_res,
         "bm_res": bm_res,
-        "bert_res": bert_res
+        "bert_res": bert_res,
+        "vsm_eval": evalVSM,
+        "bm25_eval": evalBM25,
+        "bert_eval": evalBERT,
+        "title": queryTitle
     }
 
     return render_template('retrieved.html', data = data)
@@ -61,10 +70,13 @@ def retrieved():
 def index():
     global data_preprocessor
     titles = data_preprocessor.titles
+    data_set = data_preprocessor.data_set
+    #print(data_set, flush=True)
     #print(titles, flush=True)
 
     data = {
-        "titles": titles
+        "titles": titles,
+        "data_set": data_set
     }
 
     return render_template('index.html', data = data)

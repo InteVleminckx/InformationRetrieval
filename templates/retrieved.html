@@ -6,7 +6,7 @@
     <link href="/static/style.css" rel="stylesheet" />
 </head>
 <body>
-<p>Retrieved</p>
+<h2 id="page_title"></h2>
 <div id = 'available_titles'>
     <table id='comparison_table'>
         <tr>
@@ -14,14 +14,44 @@
             <th>BM25</th>
             <th>BERT</th>
         </tr>
-
     </table>
+</div>
+<div>
+<table>
+    <tr>
+        <th>Algorithm</th>
+        <th>Recall</th>
+        <th>Precision</th>
+        <th>Average Precision</th>
+    </tr>
+    <tr>
+        <td>VSM</td>
+        <td id="recall_VSM"></td>
+        <td id="p_VSM"></td>
+        <td id="ap_VSM"></td>
+    </tr>
+    <tr>
+        <td>BM25</td>
+        <td id="recall_BM25"></td>
+        <td id="p_BM25"></td>
+        <td id="ap_BM25"></td>
+    </tr>
+    <tr>
+        <td>BERT</td>
+        <td id="recall_BERT"></td>
+        <td id="p_BERT"></td>
+        <td id="ap_BERT"></td>
+    </tr>
+</table>
 </div>
 
 <script>
     let bodyTable = "<tr><th>VSM</th><th>BM25</th><th>BERT</th></tr>";
-    console.log("HIERR")
     var flaskData = {{ data|tojson }};
+
+    document.getElementById('page_title').innerText = 'Retrieved titles by the different retrieval methods for title ' +
+        '\'' + flaskData.title + '\''
+
     console.log(flaskData);
     for (let i = 0; i < flaskData.vms_res.length; i++) {
         bodyTable += "<tr><td>"+ flaskData.vms_res[i] + "</td>"
@@ -29,6 +59,21 @@
         bodyTable += "<td>"+ flaskData.bert_res[i] + "</td></tr>"
     }
     document.getElementById('comparison_table').innerHTML = bodyTable;
+
+    console.log(flaskData.vsm_eval)
+
+    document.getElementById('recall_VSM').innerText = flaskData.vsm_eval.recall
+    document.getElementById('p_VSM').innerText = flaskData.vsm_eval.precision
+    document.getElementById('ap_VSM').innerText = flaskData.vsm_eval.AP
+
+    document.getElementById('recall_BM25').innerText = flaskData.bm25_eval.recall
+    document.getElementById('p_BM25').innerText = flaskData.bm25_eval.precision
+    document.getElementById('ap_BM25').innerText = flaskData.bm25_eval.AP
+
+    document.getElementById('recall_BERT').innerText = flaskData.bert_eval.recall
+    document.getElementById('p_BERT').innerText = flaskData.bert_eval.precision
+    document.getElementById('ap_BERT').innerText = flaskData.bert_eval.AP
+
 </script>
 
 
