@@ -6,7 +6,10 @@
     <link href="/static/style.css" rel="stylesheet" />
 </head>
 <body>
-<h2 id="page_title"></h2>
+<div>
+    <h2 id="page_title"></h2>
+    <button onclick="goToMainPage()">Return to main</button>
+</div>
 <div id = 'available_titles'>
     <table id='comparison_table'>
         <tr>
@@ -23,24 +26,28 @@
         <th>Recall</th>
         <th>Precision</th>
         <th>Average Precision</th>
+        <th>Runtime (seconds)</th>
     </tr>
     <tr>
         <td>VSM</td>
         <td id="recall_VSM"></td>
         <td id="p_VSM"></td>
         <td id="ap_VSM"></td>
+        <td id="rt_VSM"></td>
     </tr>
     <tr>
         <td>BM25</td>
         <td id="recall_BM25"></td>
         <td id="p_BM25"></td>
         <td id="ap_BM25"></td>
+        <td id="rt_BM25"></td>
     </tr>
     <tr>
         <td>BERT</td>
         <td id="recall_BERT"></td>
         <td id="p_BERT"></td>
         <td id="ap_BERT"></td>
+        <td id="rt_BERT"></td>
     </tr>
 </table>
 </div>
@@ -65,15 +72,21 @@
     document.getElementById('recall_VSM').innerText = flaskData.vsm_eval.recall
     document.getElementById('p_VSM').innerText = flaskData.vsm_eval.precision
     document.getElementById('ap_VSM').innerText = flaskData.vsm_eval.AP
+    document.getElementById('rt_VSM').innerText = flaskData.timeVSM
 
     document.getElementById('recall_BM25').innerText = flaskData.bm25_eval.recall
     document.getElementById('p_BM25').innerText = flaskData.bm25_eval.precision
     document.getElementById('ap_BM25').innerText = flaskData.bm25_eval.AP
+    document.getElementById('rt_BM25').innerText = flaskData.timeBM
 
     document.getElementById('recall_BERT').innerText = flaskData.bert_eval.recall
     document.getElementById('p_BERT').innerText = flaskData.bert_eval.precision
     document.getElementById('ap_BERT').innerText = flaskData.bert_eval.AP
+    document.getElementById('rt_BERT').innerText = flaskData.timeBERT
 
+    function goToMainPage() {
+        window.location.href = '/';
+    }
 </script>
 
 

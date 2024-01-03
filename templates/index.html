@@ -13,7 +13,7 @@
 </div>
 <div id = 'available_titles'>
     <table id='titles_table'>
-        <tr><th>\Title</th></tr>
+        <tr><th>Title</th></tr>
     </table>
     <h3 id="title_selected"></h3>
     <p id="game_info" align="left" ></p>
@@ -55,11 +55,6 @@
                 //setTimeout(changePage(response), 3000)
                 window.location.href = response.url; //redirecting to retrieved page
             })
-
-    }
-
-    function changePage(x){
-        window.location.href = x.url;
     }
 </script>
 

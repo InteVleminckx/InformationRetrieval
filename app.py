@@ -10,10 +10,11 @@ from src.vector_space_model import VSM
 
 from src.utils import *
 import os
+import time
 
 app = Flask(__name__)
 
-dataset = "data/video_games.txt"
+dataset = "data/video_games_small.txt"
 cwd = os.getcwd()
 data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
 groundTruthLabels = get_ground_truth(f"{cwd}/data/ground-truth.gt")
@@ -29,14 +30,23 @@ def statistics():
     #bert = BERT(data_preprocessor)
     #bert.parallel_encode_documents(num_processes=2)
 
+    startVSM = time.time()
     resultVSM = vsm.rank_documents(queryTitle, k=topK)
-    resultBM = bm25.rank_documents(queryTitle, k=topK)
+    endVSM = time.time()
 
+    startBM = time.time()
+    resultBM = bm25.rank_documents(queryTitle, k=topK)
+    endBM = time.time()
+
+    startBERT = time.time()
     #resultBERT = bert.rank_documents(queryTitle, k=15)
+    endBERT = time.time()
+
     resultBERT = ["lol", "bitch", "yeet", "jezus", "mozes"]
 
     return redirect(url_for('retrieved', VSM_res = '#'.join(resultVSM), BM_res = '#'.join(resultBM), BERT_res =
-    '#'.join(resultBERT), title = queryTitle), code= 302)
+    '#'.join(resultBERT), title = queryTitle, timeVSM = endVSM-startVSM, timeBM = endBM-startBM, timeBERT =
+    endBERT-startBERT), code= 302)
 
 @app.route('/retrieved/')
 def retrieved():
@@ -58,7 +68,10 @@ def retrieved():
         "vsm_eval": evalVSM,
         "bm25_eval": evalBM25,
         "bert_eval": evalBERT,
-        "title": queryTitle
+        "title": queryTitle,
+        "timeVSM": round(float(request.args.get('timeVSM')), 5),
+        "timeBM": round(float(request.args.get('timeBM')), 5),
+        "timeBERT": round(float(request.args.get('timeBERT')), 5)
     }
 
     return render_template('retrieved.html', data = data)
@@ -71,8 +84,6 @@ def index():
     global data_preprocessor
     titles = data_preprocessor.titles
     data_set = data_preprocessor.data_set
-    #print(data_set, flush=True)
-    #print(titles, flush=True)
 
     data = {
         "titles": titles,
