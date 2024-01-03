@@ -1,8 +1,5 @@
-import time
-
 from flask import Flask, request
-from flask import render_template, redirect, url_for, jsonify, make_response
-from flask import json
+from flask import render_template, redirect, url_for
 
 from src.bert import BERT
 from src.okapi_BM25 import BM25
@@ -14,7 +11,7 @@ import time
 
 app = Flask(__name__)
 
-dataset = "data/video_games_small.txt"
+dataset = "data/video_games.txt"
 cwd = os.getcwd()
 data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
 groundTruthLabels = get_ground_truth(f"{cwd}/data/ground-truth.gt")
@@ -27,8 +24,7 @@ def statistics():
 
     vsm = VSM(data_preprocessor)
     bm25 = BM25(data_preprocessor)
-    #bert = BERT(data_preprocessor)
-    #bert.parallel_encode_documents(num_processes=2)
+    bert = BERT(data_preprocessor)
 
     startVSM = time.time()
     resultVSM = vsm.rank_documents(queryTitle, k=topK)
@@ -39,10 +35,8 @@ def statistics():
     endBM = time.time()
 
     startBERT = time.time()
-    #resultBERT = bert.rank_documents(queryTitle, k=15)
+    resultBERT = bert.rank_documents(dataset, queryTitle, k=topK)
     endBERT = time.time()
-
-    resultBERT = ["lol", "bitch", "yeet", "jezus", "mozes"]
 
     return redirect(url_for('retrieved', VSM_res = '#'.join(resultVSM), BM_res = '#'.join(resultBM), BERT_res =
     '#'.join(resultBERT), title = queryTitle, timeVSM = endVSM-startVSM, timeBM = endBM-startBM, timeBERT =
