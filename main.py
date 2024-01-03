@@ -67,3 +67,4 @@ if __name__ == "__main__":
     data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
     vsm = BM25(data_preprocessor)
     result = vsm.rank_documents("Om Nom: Run", k=15)
+    print(result)

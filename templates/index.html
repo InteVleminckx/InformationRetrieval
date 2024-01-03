@@ -3,60 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <title>Video games</title>
-    <link href="/static/style.css" rel="stylesheet" />
+    <link href="/static/style.css" rel="stylesheet"/>
 </head>
 <body>
-<div>
-    <input type="search" id="searchBar" placeholder="Type or choose title...">
-    <button onclick="queryTitle(this)">Retrieve</button>
-    <input type="number" id="topK" value="5">
+
+<!-- Header of the page-->
+<div id="documents">
+    <div class="container_header">
+        <div class="header_part" id="part-1">
+            <div>
+                <label for="document-input">Document: </label>
+                <input type="search" id="document-input" placeholder="Type or select a title"/>
+            </div>
+            <div>
+                <label for="top-k">Top-k: </label>
+                <input type="number" id="top-k" min="0" value="5"/>
+            </div>
+        </div>
+        <div class="header_part" id="part-2">
+            <button onclick="queryTitle(this)">Retrieve</button>
+        </div>
+    </div>
+
+    <!-- Content of the page-->
+    <div class="container_content">
+        <!--  Table containing all the document titles  -->
+        <div class="content_part" id="part-3">
+            <table class="document-table" id="table-docs">
+            </table>
+        </div>
+        <!--  Displaying the document content  -->
+        <div class="content_part" id="part-4">
+
+        </div>
+    </div>
 </div>
-<div id = 'available_titles'>
-    <table id='titles_table'>
-        <tr><th>Title</th></tr>
-    </table>
-    <h3 id="title_selected"></h3>
-    <p id="game_info" align="left" ></p>
-</div>
+
+<div id="loader"></div>
 
 <script>
-    // Loading all game titles 
-    let bodyTable = "<tr><th>Title</th></tr>";
-    var flaskData = {{ data|tojson }};
-    for (let i = 0; i < flaskData.titles.length; i++) {
-        bodyTable += "<tr><td onclick =\"chooseTitle(this)\">"+ flaskData.titles[i] + "</td></tr>"
-    }
-    document.getElementById('titles_table').innerHTML = bodyTable;
 
-    
-    //function to use selected title as query
-    function chooseTitle(x) {
-        document.getElementById("searchBar").value = x.innerHTML;
-        document.getElementById("game_info").innerHTML =  flaskData.data_set[x.innerHTML];
-        document.getElementById("title_selected").innerHTML = x.innerHTML;
+    let documents = {{ data | tojson }};
+    display_titles();
+
+    /**
+     * display_titles
+     * --------------*
+     * Retrieves the data from the flask input and displays the titles in the table.
+     */
+    function display_titles() {
+        // Getting data
+
+
+        let table_body = "";
+
+        for (let i = 0; i < documents.titles.length; i++) {
+            let title_ = documents.titles[i];
+            // console.log(content_)
+            table_body +=
+                `<tr class="custom-row">` +
+                    `<td onclick="select_title('${title_}')" class="row-item">${title_}</td>` +
+                `</tr>`;
+        }
+
+
+        document.getElementById("table-docs").innerHTML = table_body;
+
     }
 
-    async function queryTitle(x) {
-        console.log(document.getElementById("searchBar").value)
-        // $.post("/retrieval", {
-        //     query_title: document.getElementById("searchBar").value
-        // })
+    /**
+     * select_title
+     * ------------*
+     * Selects a title, displays the document content and puts the name in the input field.
+     * @param selected_title - the selected title
+     */
+    function select_title(selected_title) {
+        document.getElementById("document-input").value = selected_title;
+        document.getElementById("part-4").innerText = documents.data_set[selected_title]
+    }
+
+        async function queryTitle(x) {
+
+        // Show loader before making the fetch request
+        showLoader();
+
         fetch("/retrieval", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                // 'Content-Type': 'application/x-www-form-urlencoded',
                 },
             body:JSON.stringify({
-                title: document.getElementById("searchBar").value,
-                topK: document.getElementById("topK").value
+                title: document.getElementById("document-input").value,
+                topK: document.getElementById("top-k").value
             }),
-            }).then(response => {
-                //setTimeout(changePage(response), 3000)
-                window.location.href = response.url; //redirecting to retrieved page
-            })
+        }).then(response => {
+
+            // Hide loader when response is received
+            hideLoader();
+            window.location.href = response.url; //redirecting to retrieved page
+        })
+
     }
+
+    function showLoader() {
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("documents").style.display = "none";
+
+    }
+
+    function hideLoader() {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("documents").style.display = "block";
+    }
+
 </script>
+
 
 
 </body>

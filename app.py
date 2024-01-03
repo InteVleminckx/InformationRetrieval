@@ -1,3 +1,5 @@
+import time
+
 from flask import Flask, request
 from flask import render_template, redirect, url_for
 
@@ -71,9 +73,7 @@ def retrieved():
     return render_template('retrieved.html', data = data)
 
 
-
 @app.route('/')
-#@app.route('/<documents>')
 def index():
     global data_preprocessor
     titles = data_preprocessor.titles
@@ -84,7 +84,9 @@ def index():
         "data_set": data_set
     }
 
-    return render_template('index.html', data = data)
+    data["titles"].sort()
+
+    return render_template('index.html', data=data)
 
 
 if __name__ == "__main__":
