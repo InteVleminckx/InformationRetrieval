@@ -16,6 +16,7 @@ dataset = "data/video_games.txt"
 cwd = os.getcwd()
 data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
 groundTruthLabels = get_ground_truth(f"{cwd}/data/ground-truth.gt")
+print(groundTruthLabels, flush=True)
 vsm = VSM(data_preprocessor)
 bm25 = BM25(data_preprocessor)
 bert = BERT(data_preprocessor)

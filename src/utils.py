@@ -35,16 +35,31 @@ def get_preprocessed_data(dataset):
 
 
 def get_ground_truth(path):
+    import copy
+    import pickle
     with open(path, 'rb') as gt:
         gt_data = gt.read()
-        return pickle.loads(gt_data)
+        gt = pickle.loads(gt_data)
+        gtDC = copy.deepcopy(gt)
+        for k in gt.keys():
+            for v in gt[k]:
+                if v not in gtDC.keys():
+                    gtDC[v] = copy.deepcopy(gt[k])
+                    gtDC[v].pop(v)
+                    gtDC[v][k] = 1
+                elif v in gtDC.keys() and k not in gtDC[v].keys():
+                    gtDC[v][k] = 1
+        return gtDC
 
 
 def evaluate(result, ground_truth_labels, query_doc):
     avg_precision = 0
     total_match = 0
+    print(result, flush=True)
+    results_lower = [res.lower() for res in result]
     for doc in ground_truth_labels[query_doc]:
-        if doc in result:
+        print(doc, flush=True)
+        if doc.lower() in results_lower:
             total_match += 1
             avg_precision += total_match / (result.index(doc) + 1)
 
