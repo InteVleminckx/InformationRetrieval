@@ -7,6 +7,10 @@
 
 }
 
+td:hover {
+    background-color: lightslategray;
+}
+
 * {
     font-family: 'Kumbh Sans', sans-serif;
     scroll-behavior: smooth;

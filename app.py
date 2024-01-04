@@ -11,7 +11,7 @@ from src.vector_space_model import VSM
 
 app = Flask(__name__)
 
-dataset = "data/video_games_short.txt"
+dataset = "data/video_games_small.txt"
 cwd = os.getcwd()
 data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
 groundTruthLabels = get_ground_truth(f"{cwd}/data/ground-truth.gt")
@@ -47,6 +47,8 @@ def statistics():
 @app.route('/retrieved/')
 def retrieved():
     global groundTruthLabels
+    data_set = data_preprocessor.data_set
+
     vms_res = request.args.get('VSM_res').split('#')
     bm_res = request.args.get('BM_res').split('#')
     bert_res = request.args.get('BERT_res').split('#')
@@ -66,7 +68,8 @@ def retrieved():
         "title": queryTitle,
         "timeVSM": round(float(request.args.get('timeVSM')), 5),
         "timeBM": round(float(request.args.get('timeBM')), 5),
-        "timeBERT": round(float(request.args.get('timeBERT')), 5)
+        "timeBERT": round(float(request.args.get('timeBERT')), 5),
+        "data_set": data_set
     }
 
     return render_template('retrieved.html', data=data)
