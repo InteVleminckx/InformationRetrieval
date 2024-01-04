@@ -64,7 +64,7 @@
             // console.log(content_)
             table_body +=
                 `<tr class="custom-row">` +
-                    `<td onclick="select_title('${title_}')" class="row-item">${title_}</td>` +
+                    `<td onclick="select_title(this)" class="row-item">${title_}</td>` +
                 `</tr>`;
         }
 
@@ -80,8 +80,8 @@
      * @param selected_title - the selected title
      */
     function select_title(selected_title) {
-        document.getElementById("document-input").value = selected_title;
-        document.getElementById("inner-text").innerText = documents.data_set[selected_title]
+        document.getElementById("document-input").value = selected_title.innerHTML;
+        document.getElementById("inner-text").innerText = documents.data_set[selected_title.innerHTML]
     }
 
         async function queryTitle(x) {

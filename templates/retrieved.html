@@ -95,11 +95,11 @@
     console.log(flaskData);
     for (let i = 0; i < flaskData.vms_res.length; i++) {
         let title_VSM = flaskData.vms_res[i];
-        bodyTable += '<tr>' + `<td onclick="select_title('${title_VSM}')" class="row-item">${title_VSM}</td>`
+        bodyTable += '<tr>' + `<td onclick="select_title(this)" class="row-item">${title_VSM}</td>`
         let title_BM = flaskData.bm_res[i];
-        bodyTable += `<td onclick="select_title('${title_BM}')" class="row-item">${title_BM}</td>`
+        bodyTable += `<td onclick="select_title(this)" class="row-item">${title_BM}</td>`
         let title_BERT = flaskData.bert_res[i];
-        bodyTable += `<td onclick="select_title('${title_BERT}')" class="row-item">${title_BERT}</td>` + '</tr>'
+        bodyTable += `<td onclick="select_title(this)" class="row-item">${title_BERT}</td>` + '</tr>'
     }
     document.getElementById('comparison_table').innerHTML = bodyTable;
 
@@ -124,8 +124,8 @@
         window.location.href = '/';
     }
 
-    function select_title(x) {
-        document.getElementById('inner-text').innerText = flaskData.data_set[x];
+    function select_title(selected) {
+        document.getElementById('inner-text').innerText = flaskData.data_set[selected.innerHTML];
     }
 </script>
 </body>

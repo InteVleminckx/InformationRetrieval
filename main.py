@@ -66,5 +66,12 @@ if __name__ == "__main__":
     cwd = os.getcwd()
     data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
     vsm = VSM(data_preprocessor)
-    result = vsm.rank_documents("Advanced Dungeons & Dragons: Treasure of Tarmin", k=15)
+    bm25 = BM25(data_preprocessor)
+    bert = BERT(data_preprocessor)
+    result = vsm.rank_documents("Assassin's Creed IV: Black Flag", k=15)
     print(result)
+    result = bm25.rank_documents("Assassin's Creed IV: Black Flag", k=15)
+    print(result)
+    result = bert.rank_documents(dataset, "Assassin's Creed IV: Black Flag", k=15)
+    print(result)
+

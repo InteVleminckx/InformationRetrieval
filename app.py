@@ -1,3 +1,4 @@
+import copy
 import os
 import time
 
@@ -11,21 +12,23 @@ from src.vector_space_model import VSM
 
 app = Flask(__name__)
 
-dataset = "data/video_games_small.txt"
+dataset = "data/video_games.txt"
 cwd = os.getcwd()
 data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
 groundTruthLabels = get_ground_truth(f"{cwd}/data/ground-truth.gt")
+vsm = VSM(data_preprocessor)
+bm25 = BM25(data_preprocessor)
+bert = BERT(data_preprocessor)
 
 
 @app.route('/retrieval', methods=['POST'])
 def statistics():
-    global data_preprocessor
+    global data_preprocessor, vsm, bm25, bert
+
     queryTitle = request.get_json()['title']
     topK = int(request.get_json()['topK'])
 
-    vsm = VSM(data_preprocessor)
-    bm25 = BM25(data_preprocessor)
-    bert = BERT(data_preprocessor)
+    print(queryTitle, flush=True)
 
     startVSM = time.time()
     resultVSM = vsm.rank_documents(queryTitle, k=topK)
@@ -78,15 +81,13 @@ def retrieved():
 @app.route('/')
 def index():
     global data_preprocessor
-    titles = data_preprocessor.titles
+    titles = copy.deepcopy(data_preprocessor.titles)
     data_set = data_preprocessor.data_set
-
+    titles.sort()
     data = {
         "titles": titles,
         "data_set": data_set
     }
-
-    data["titles"].sort()
 
     return render_template('index.html', data=data)
 
