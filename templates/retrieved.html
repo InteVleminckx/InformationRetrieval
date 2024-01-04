@@ -3,67 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <title>Video games</title>
-    <link href="/static/style.css" rel="stylesheet" />
+    <link href="/static/retrieved.css" rel="stylesheet"/>
 </head>
 <body>
-<div>
-    <h2 id="page_title"></h2>
-    <button onclick="goToMainPage()">Return to main</button>
+
+<!-- Header of the page -->
+<div class="header">
+
+    <div class="title">
+        <h2 id="page_title"></h2>
+    </div>
+
+
+    <div class="back_menu">
+        <button onclick="goToMainPage()">Return to main</button>
+    </div>
+
 </div>
-<div id = 'available_titles'>
-    <table id='comparison_table'>
-        <tr>
-            <th>VSM</th>
-            <th>BM25</th>
-            <th>BERT</th>
-        </tr>
-    </table>
+
+
+<!-- Content of the page -->
+<div class="content">
+
+<!--  Tables  -->
+    <div class="left-content">
+
+<!--    Comparison table    -->
+        <div id='available_titles'>
+            <table id='comparison_table'>
+                <tr>
+                    <th>VSM</th>
+                    <th>BM25</th>
+                    <th>BERT</th>
+                </tr>
+            </table>
+        </div>
+
+<!--    Evaluation tables    -->
+        <table>
+            <tr>
+                <th>Algorithm</th>
+                <th>Recall</th>
+                <th>Precision</th>
+                <th>Average Precision</th>
+                <th>Runtime (seconds)</th>
+            </tr>
+            <tr>
+                <td>VSM</td>
+                <td id="recall_VSM"></td>
+                <td id="p_VSM"></td>
+                <td id="ap_VSM"></td>
+                <td id="rt_VSM"></td>
+            </tr>
+            <tr>
+                <td>BM25</td>
+                <td id="recall_BM25"></td>
+                <td id="p_BM25"></td>
+                <td id="ap_BM25"></td>
+                <td id="rt_BM25"></td>
+            </tr>
+            <tr>
+                <td>BERT</td>
+                <td id="recall_BERT"></td>
+                <td id="p_BERT"></td>
+                <td id="ap_BERT"></td>
+                <td id="rt_BERT"></td>
+            </tr>
+        </table>
+
+    </div>
+
+<!--  Document info overview  -->
+    <div class="right-content">
+        <div id="inner-text"></div>
+    </div>
+
+
 </div>
+
+
 <div>
-<table>
-    <tr>
-        <th>Algorithm</th>
-        <th>Recall</th>
-        <th>Precision</th>
-        <th>Average Precision</th>
-        <th>Runtime (seconds)</th>
-    </tr>
-    <tr>
-        <td>VSM</td>
-        <td id="recall_VSM"></td>
-        <td id="p_VSM"></td>
-        <td id="ap_VSM"></td>
-        <td id="rt_VSM"></td>
-    </tr>
-    <tr>
-        <td>BM25</td>
-        <td id="recall_BM25"></td>
-        <td id="p_BM25"></td>
-        <td id="ap_BM25"></td>
-        <td id="rt_BM25"></td>
-    </tr>
-    <tr>
-        <td>BERT</td>
-        <td id="recall_BERT"></td>
-        <td id="p_BERT"></td>
-        <td id="ap_BERT"></td>
-        <td id="rt_BERT"></td>
-    </tr>
-</table>
+
 </div>
 
 <script>
     let bodyTable = "<tr><th>VSM</th><th>BM25</th><th>BERT</th></tr>";
-    var flaskData = {{ data|tojson }};
+    var flaskData = {{ data | tojson}};
 
     document.getElementById('page_title').innerText = 'Retrieved titles by the different retrieval methods for title ' +
         '\'' + flaskData.title + '\''
 
     console.log(flaskData);
     for (let i = 0; i < flaskData.vms_res.length; i++) {
-        bodyTable += "<tr><td>"+ flaskData.vms_res[i] + "</td>"
-        bodyTable += "<td>"+ flaskData.bm_res[i] + "</td>"
-        bodyTable += "<td>"+ flaskData.bert_res[i] + "</td></tr>"
+        bodyTable += "<tr><td>" + flaskData.vms_res[i] + "</td>"
+        bodyTable += "<td>" + flaskData.bm_res[i] + "</td>"
+        bodyTable += "<td>" + flaskData.bert_res[i] + "</td></tr>"
     }
     document.getElementById('comparison_table').innerHTML = bodyTable;
 

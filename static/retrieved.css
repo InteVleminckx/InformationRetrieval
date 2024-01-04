@@ -1,0 +1,117 @@
+:root {
+
+    --dash-bg-color: #FFFFFF;
+    --dash-sh-style: 0 0 20px -8px rgb(160 163 198);
+    --dash-bd-style: 0 solid #d9dee3;
+    --dash-bd-radius: 8px;
+
+}
+
+* {
+    font-family: 'Kumbh Sans', sans-serif;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #e1e1e1;
+}
+
+.header {
+    background-color: var(--dash-bg-color);
+    box-shadow: var(--dash-sh-style);
+    border: var(--dash-bd-style);
+    border-radius: var(--dash-bd-radius);
+    display: flex;
+    flex-direction: row;
+}
+
+.title {
+    display: flex;
+    height: 5vh;
+    margin: 10px;
+    justify-items: center;
+    align-items: center;
+    align-content: center;
+    width: 75%;
+}
+
+.back_menu {
+    display: flex;
+    height: 5vh;
+    margin: 10px;
+    align-items: center;
+    width: 25%;
+}
+
+button {
+    width: 200px;
+    height: 35px;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.left-content {
+    display: flex;
+    height: 90vh;
+    margin: 10px;
+    background-color: var(--dash-bg-color);
+    box-shadow: var(--dash-sh-style);
+    border: var(--dash-bd-style);
+    border-radius: var(--dash-bd-radius);
+    flex-direction: column;
+    width: 50%;
+}
+
+.right-content {
+    display: flex;
+    height: 90vh;
+    margin: 10px;
+    background-color: var(--dash-bg-color);
+    box-shadow: var(--dash-sh-style);
+    border: var(--dash-bd-style);
+    border-radius: var(--dash-bd-radius);
+    width: 50%;
+}
+
+#available_titles {
+    height: 50%;
+    margin-bottom: 25px;
+    overflow-y: auto;
+}
+
+table {
+    width: 100%;
+}
+
+table tr:nth-child(odd) {
+    background-color: #f2f2f2;
+    height: 25px;
+}
+
+table tr:nth-child(even) {
+    background-color: #ffffff;
+    height: 25px;
+}
+
+table tr {
+    border: 1px solid #dddddd;
+}
+
+table td {
+    padding: 8px;
+    text-align: left;
+}
+
+#inner-text {
+    margin: 10px;
+    overflow-y: auto;
+    height: 85vh;
+}
