@@ -65,6 +65,6 @@ if __name__ == "__main__":
     from src.data_pre_processor import DataPreProcessor
     cwd = os.getcwd()
     data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
-    vsm = BM25(data_preprocessor)
-    result = vsm.rank_documents("Om Nom: Run", k=15)
+    vsm = VSM(data_preprocessor)
+    result = vsm.rank_documents("Advanced Dungeons & Dragons: Treasure of Tarmin", k=15)
     print(result)

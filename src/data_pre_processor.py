@@ -115,10 +115,13 @@ class DataPreProcessor:
 
         df = pd.read_csv(dataset)
         self.titles = df['Title'].to_list()
+        for i, title in enumerate(self.titles):
+            self.titles[i] = title.replace("&amp;", "&")
         df['Sections'] = df['Sections'].apply(safe_eval)
 
         with open(output_file, 'w') as output:
             for i, (title, sections) in df.iterrows():
+                title = title.replace("&amp;", "&")
                 self.data_set[title] = ''
 
                 document = ""
@@ -142,6 +145,7 @@ class DataPreProcessor:
                 for line in input.readlines():
                     # Already lowering the text, because this can be done faster here than in c++
                     line = line.lower()
+                    line = line.replace("&amp;", "&")
                     output.write(line)
 
         new_input_file = output_file
