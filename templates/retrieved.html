@@ -85,7 +85,6 @@
 <div>
 
 </div>
-
 <script>
     let bodyTable = "<tr><th>VSM</th><th>BM25</th><th>BERT</th></tr>";
     var flaskData = {{ data | tojson}};
@@ -95,9 +94,12 @@
 
     console.log(flaskData);
     for (let i = 0; i < flaskData.vms_res.length; i++) {
-        bodyTable += "<tr><td>" + flaskData.vms_res[i] + "</td>"
-        bodyTable += "<td>" + flaskData.bm_res[i] + "</td>"
-        bodyTable += "<td>" + flaskData.bert_res[i] + "</td></tr>"
+        let title_VSM = flaskData.vms_res[i];
+        bodyTable += '<tr>' + `<td onclick="select_title('${title_VSM}')" class="row-item">${title_VSM}</td>`
+        let title_BM = flaskData.bm_res[i];
+        bodyTable += `<td onclick="select_title('${title_BM}')" class="row-item">${title_BM}</td>`
+        let title_BERT = flaskData.bert_res[i];
+        bodyTable += `<td onclick="select_title('${title_BERT}')" class="row-item">${title_BERT}</td>` + '</tr>'
     }
     document.getElementById('comparison_table').innerHTML = bodyTable;
 
@@ -121,8 +123,10 @@
     function goToMainPage() {
         window.location.href = '/';
     }
+
+    function select_title(x) {
+        document.getElementById('inner-text').innerText = flaskData.data_set[x];
+    }
 </script>
-
-
 </body>
 </html>
