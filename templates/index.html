@@ -34,12 +34,14 @@
         </div>
         <!--  Displaying the document content  -->
         <div class="content_part" id="part-4">
-
+            <div id="inner-text"></div>
         </div>
     </div>
 </div>
 
-<div id="loader"></div>
+<div id="loader-content">
+    <div id="loader"></div>
+</div>
 
 <script>
 
@@ -79,7 +81,7 @@
      */
     function select_title(selected_title) {
         document.getElementById("document-input").value = selected_title;
-        document.getElementById("part-4").innerText = documents.data_set[selected_title]
+        document.getElementById("inner-text").innerText = documents.data_set[selected_title]
     }
 
         async function queryTitle(x) {
@@ -106,12 +108,14 @@
     }
 
     function showLoader() {
+        document.getElementById("loader-content").style.display = "flex";
         document.getElementById("loader").style.display = "block";
         document.getElementById("documents").style.display = "none";
 
     }
 
     function hideLoader() {
+        document.getElementById("loader-content").style.display = "none";
         document.getElementById("loader").style.display = "none";
         document.getElementById("documents").style.display = "block";
     }

@@ -1,3 +1,4 @@
+import os
 import time
 
 from flask import Flask, request
@@ -5,20 +6,18 @@ from flask import render_template, redirect, url_for
 
 from src.bert import BERT
 from src.okapi_BM25 import BM25
-from src.vector_space_model import VSM
-
 from src.utils import *
-import os
-import time
+from src.vector_space_model import VSM
 
 app = Flask(__name__)
 
-dataset = "data/video_games.txt"
+dataset = "data/video_games_short.txt"
 cwd = os.getcwd()
 data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
 groundTruthLabels = get_ground_truth(f"{cwd}/data/ground-truth.gt")
 
-@app.route('/retrieval', methods = ['POST'])
+
+@app.route('/retrieval', methods=['POST'])
 def statistics():
     global data_preprocessor
     queryTitle = request.get_json()['title']
@@ -40,9 +39,10 @@ def statistics():
     resultBERT = bert.rank_documents(dataset, queryTitle, k=topK)
     endBERT = time.time()
 
-    return redirect(url_for('retrieved', VSM_res = '#'.join(resultVSM), BM_res = '#'.join(resultBM), BERT_res =
-    '#'.join(resultBERT), title = queryTitle, timeVSM = endVSM-startVSM, timeBM = endBM-startBM, timeBERT =
-    endBERT-startBERT), code= 302)
+    return redirect(url_for('retrieved', VSM_res='#'.join(resultVSM), BM_res='#'.join(resultBM), BERT_res=
+    '#'.join(resultBERT), title=queryTitle, timeVSM=endVSM - startVSM, timeBM=endBM - startBM, timeBERT=
+                            endBERT - startBERT), code=302)
+
 
 @app.route('/retrieved/')
 def retrieved():
@@ -51,7 +51,6 @@ def retrieved():
     bm_res = request.args.get('BM_res').split('#')
     bert_res = request.args.get('BERT_res').split('#')
     queryTitle = request.args.get('title')
-
 
     evalVSM = evaluate(vms_res, groundTruthLabels, queryTitle)
     evalBM25 = evaluate(bm_res, groundTruthLabels, queryTitle)
@@ -70,7 +69,7 @@ def retrieved():
         "timeBERT": round(float(request.args.get('timeBERT')), 5)
     }
 
-    return render_template('retrieved.html', data = data)
+    return render_template('retrieved.html', data=data)
 
 
 @app.route('/')
