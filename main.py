@@ -12,7 +12,7 @@ from src.utils import *
 if __name__ == "__main__":
     # multiprocessing.set_start_method("spawn", force=True)
 
-    dataset = "data/video_games.txt"
+    dataset = "data/video_games_small.txt"
     # gtl = "data/ground-truth.ground-truth.gt"
     # document_name = "Mafia III"
     #

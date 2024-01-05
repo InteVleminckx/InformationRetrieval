@@ -12,13 +12,15 @@ from src.vector_space_model import VSM
 
 app = Flask(__name__)
 
-dataset = "data/video_games.txt"
+dataset = "data/video_games_small.txt"
 cwd = os.getcwd()
 data_preprocessor = DataPreProcessor(f"{cwd}/{dataset}", cwd)
 groundTruthLabels = get_ground_truth(f"{cwd}/data/ground-truth.gt")
 vsm = VSM(data_preprocessor)
 bm25 = BM25(data_preprocessor)
 bert = BERT(data_preprocessor)
+
+
 
 
 @app.route('/retrieval', methods=['POST'])
@@ -28,8 +30,7 @@ def statistics():
     queryTitle = request.get_json()['title']
     topK = int(request.get_json()['topK'])
 
-    print(queryTitle, flush=True)
-
+    #running the different retrieval methods on the dataset
     startVSM = time.time()
     resultVSM = vsm.rank_documents(queryTitle, k=topK)
     endVSM = time.time()
@@ -42,6 +43,7 @@ def statistics():
     resultBERT = bert.rank_documents(dataset, queryTitle, k=topK)
     endBERT = time.time()
 
+    #redirecting to retrieved page
     return redirect(url_for('retrieved', VSM_res='#'.join(resultVSM), BM_res='#'.join(resultBM), BERT_res=
     '#'.join(resultBERT), title=queryTitle, timeVSM=endVSM - startVSM, timeBM=endBM - startBM, timeBERT=
                             endBERT - startBERT), code=302)
@@ -57,6 +59,7 @@ def retrieved():
     bert_res = request.args.get('BERT_res').split('#')
     queryTitle = request.args.get('title')
 
+    #calculating the evaluation metrics on the retrieved results
     evalVSM = evaluate(vms_res, groundTruthLabels, queryTitle)
     evalBM25 = evaluate(bm_res, groundTruthLabels, queryTitle)
     evalBERT = evaluate(bert_res, groundTruthLabels, queryTitle)
@@ -83,7 +86,7 @@ def index():
     global data_preprocessor
     titles = copy.deepcopy(data_preprocessor.titles)
     data_set = data_preprocessor.data_set
-    titles.sort()
+    titles.sort()   # sorting the titles
     data = {
         "titles": titles,
         "data_set": data_set

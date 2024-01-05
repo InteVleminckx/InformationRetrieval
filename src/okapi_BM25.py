@@ -1,6 +1,4 @@
 from rank_bm25 import BM25Okapi
-
-from src.data_pre_processor import DataPreProcessor
 from src.utils import *
 
 
@@ -15,6 +13,7 @@ class BM25:
         """
         This function ranks the documents based on the cosine similarity
         :param title: the title of the document
+        :param k: the length of the top results list.
         """
         lowered_title = title.lower()
         scores = self.bm25Okapi.get_scores(self.data[lowered_title]["list"])
@@ -29,8 +28,8 @@ class BM25:
         results = [sorted_sim[i][0] for i in  range(min(k, len(sorted_sim)))]
 
         # Print the top k results
-        for i in range(min(k, len(results))):
-            title, score = sorted_sim[i]
+        # for i in range(min(k, len(results))):
+        #     title, score = sorted_sim[i]
             # content = self.data[title]
             # print(f"{i + 1}) Title: {title} - Score: {score}")
             # print(f"Content: {content}")
