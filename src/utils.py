@@ -55,10 +55,8 @@ def get_ground_truth(path):
 def evaluate(result, ground_truth_labels, query_doc):
     avg_precision = 0
     total_match = 0
-    print(result, flush=True)
     results_lower = [res.lower() for res in result]
     for doc in ground_truth_labels[query_doc]:
-        print(doc, flush=True)
         if doc.lower() in results_lower:
             total_match += 1
             avg_precision += total_match / (result.index(doc) + 1)
