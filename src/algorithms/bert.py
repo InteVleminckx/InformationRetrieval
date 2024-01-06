@@ -1,8 +1,10 @@
-from sklearn.metrics.pairwise import cosine_similarity
-from src.data_pre_processor import DataPreProcessor
-from sentence_transformers import SentenceTransformer
-import pickle
 import os
+import pickle
+
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+
+from src.data_pre_processor import DataPreProcessor
 
 
 class BERT:
