@@ -14,7 +14,7 @@
 using namespace std;
 
 
-bool isStopword(const std::string& match) {
+bool isStopword(const std::string &match) {
     static const std::unordered_set<std::string> stopwords = {
             "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "you're", "you've",
             "you'll", "you'd", "your", "yours", "yourself", "yourselves", "he", "him", "his",
@@ -39,7 +39,7 @@ bool isStopword(const std::string& match) {
     return stopwords.find(match) != stopwords.end();
 }
 
-string checkWord(const string& match) {
+string checkWord(const string &match) {
 
     if (match == "n") return "";
     if (isStopword(match)) return "";
@@ -55,7 +55,9 @@ string checkWord(const string& match) {
     return match + " ";
 }
 
-void processLines(const vector<string> &lines, mutex &mtx, ofstream& csv) {
+pair<int, vector<string>> processLines(const vector<string> &lines, const int process_no) {
+
+    pair<int, vector<string>> finished_lines = {process_no, {}};
 
     // regex for extracting words
     regex remove_thrash("\\b[[:alpha:]]+\\b");
@@ -71,7 +73,8 @@ void processLines(const vector<string> &lines, mutex &mtx, ofstream& csv) {
         if (title[0] == '\"') {
             // Remove first character from the string
             title.erase(0, 1);
-        } if (title[title.size() - 1] == '\"') {
+        }
+        if (title[title.size() - 1] == '\"') {
             // Remove last character from the string
             title.erase(title.size() - 1);
         }
@@ -88,11 +91,12 @@ void processLines(const vector<string> &lines, mutex &mtx, ofstream& csv) {
             ++iterator;
         }
 
-        lock_guard<mutex> lock(mtx);
-        csv << title << "," << newline << "\n";
+        string finished_line = title + "," + newline + "\n";
+        finished_lines.second.push_back(finished_line);
 
     }
 
+    return finished_lines;
 
 }
 
@@ -101,36 +105,60 @@ void preprocess_data(const char *input_file, const char *output_file, const int 
     // Creating variables
     string line;
     vector<vector<string>> linesByProcess(num_processes);
-    vector<future<void>> futures;
+    vector<future<pair<int, vector<string>>>> futures;
+    vector<pair<int, vector<string>>> finished_processes;
 
     // Reading out input file
+    ifstream file(input_file);
+
+    // Get the number of lines in the document
+    int lineCount = std::count(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(), '\n');
+
+    // Calculate the number of lines per document
+    int no_of_lines = lineCount / num_processes;
+    int remainder = lineCount % num_processes;
     ifstream input(input_file);
 
-    // Divide lines over processes
     int process_index = 0;
     while (getline(input, line)) {
+        // Skip title section line
+        if (line == "title,sections") continue;
         linesByProcess[process_index].push_back(line);
-        process_index = (process_index + 1) % num_processes;
-    }
+        if (linesByProcess[process_index].size() == no_of_lines && process_index < num_processes - 1) process_index += 1;
 
-    // Remove Title, Sectîon from the first line
-    linesByProcess[0].erase(linesByProcess[0].begin());
-    mutex mtx;
+    }
 
     ofstream csv(output_file);
 
     // Create threads for each process
+    futures.reserve(num_processes);
+
     for (int process = 0; process < num_processes; ++process) {
-        futures.emplace_back(async(launch::async, processLines, linesByProcess[process], ref(mtx), ref(csv)));
+        futures.emplace_back(async(launch::async, processLines, linesByProcess[process], process));
     }
+
 
     // Wait for all threads to finish
+    finished_processes.reserve(futures.size());
+
     for (auto &future: futures) {
-        future.wait();
+        finished_processes.push_back(future.get());
     }
 
-}
+    int process_count = 0;
+    while (process_count < num_processes) {
 
+        for (const auto &it : finished_processes) {
+            if (it.first == process_count) {
+                for (const auto &doc : it.second) {
+                    csv << doc;
+                }
+                process_count += 1;
+            }
+        }
+    }
+}
+//
 //int main() {
-//    preprocess_data("../../data/lowered_input.csv", "../../data/pps.csv", 10);
+//    preprocess_data("/home/inte/PycharmProjects/InformationRetrieval/data/lowered_input.csv", "/home/inte/PycharmProjects/InformationRetrieval/data/pps.csv", 10);
 //}

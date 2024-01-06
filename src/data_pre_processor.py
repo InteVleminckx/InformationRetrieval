@@ -150,12 +150,12 @@ class DataPreProcessor:
 
         new_input_file = output_file
         output_file = f"{cwd}/{'data/preprocessed.csv'}"
-        num_processes = 1
+        num_processes = 10
 
         exec_path = f"{cwd}/src/data_preprocessor/dpp"
 
         # Compile cpp file
-        os.system(f"g++ -o {exec_path} {exec_path}.cpp")
+        #os.system(f"g++ -o {exec_path} {exec_path}.cpp")
 
         try:
 
