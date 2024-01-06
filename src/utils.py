@@ -64,7 +64,7 @@ def evaluate(result, ground_truth_labels, query_doc):
     return {
         "recall": calculate_recall(total_match, ground_truth_labels, query_doc),
         "precision": calculate_precision(total_match, result),
-        "AP": calculate_avg_precision(avg_precision, total_match)
+        "AP": calculate_avg_precision(avg_precision, total_match),
     }
 
 
