@@ -5,10 +5,10 @@ import time
 from flask import Flask, request
 from flask import render_template, redirect, url_for
 
-from src.bert import BERT
-from src.okapi_BM25 import BM25
+from src.algorithms.bert import BERT
+from src.algorithms.okapi_BM25 import BM25
 from src.utils import *
-from src.vector_space_model import VSM
+from src.algorithms.vector_space_model import VSM
 
 app = Flask(__name__)
 

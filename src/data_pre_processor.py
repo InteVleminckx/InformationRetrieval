@@ -150,6 +150,11 @@ class DataPreProcessor:
 
         new_input_file = output_file
         output_file = f"{cwd}/{'data/preprocessed.csv'}"
+
+        # Create output file
+        with open(output_file, "w") as f:
+            f.write("")
+
         num_processes = 10
 
         exec_path = f"{cwd}/src/data_preprocessor/dpp"
