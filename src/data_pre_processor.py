@@ -32,13 +32,26 @@ class DataPreProcessor:
         self.preprocess(input_file, 'data/lowered_input.csv', cwd)
 
     def extract_data(self, dataset, output_file):
+        """
+        Reads out the dataset correctly and lowers the text
+        :param dataset: the dataset that needed to be read out
+        :param output_file: the file where the data is going to be written in
+        """
 
+        # Read out data in a data frame
         df = pd.read_csv(dataset)
+
+        # Convert titles to a list
         self.titles = df['Title'].to_list()
+
+        # Do some cleanup
         for i, title in enumerate(self.titles):
             self.titles[i] = title.replace("&amp;", "&")
+
+        # Read out the sections as lists
         df['Sections'] = df['Sections'].apply(safe_eval)
 
+        # Reading out the section and store them per title
         with open(output_file, 'w') as output:
             for i, (title, sections) in df.iterrows():
                 title = title.replace("&amp;", "&")
@@ -53,10 +66,18 @@ class DataPreProcessor:
 
                 document = document.replace("\n", "")
 
+                # Write the lowered document to the output file
                 output.write(f'{title.lower()}, {document}\n')
 
     def preprocess(self, input_file, output_file, cwd):
+        """
+        Preprocesses the dataset
+        :param input_file: the input file of the dataset
+        :param output_file: the output file that will contain the preprocessed data
+        :param cwd: the current working directory
+        """
 
+        # Extracting the data
         self.extract_data(input_file, output_file)
 
         output_file = f"{cwd}/{output_file}"
@@ -75,8 +96,8 @@ class DataPreProcessor:
         with open(output_file, "w") as f:
             f.write("")
 
+        # Call the C++ program that will preprocess the data
         num_processes = 10
-
         exec_path = f"{cwd}/src/data_preprocessor/dpp"
 
         # Compile cpp file
@@ -90,6 +111,7 @@ class DataPreProcessor:
                                     shell=True, text=True)
             os.chdir("../..")
 
+            # If the C++ program returns 1, something went wrong so stop the program
             if str(result.returncode) == "1":
                 print("Error: there occurred an error during preprocessing the data in C++")
                 sys.exit(1)
@@ -114,6 +136,8 @@ class DataPreProcessor:
                         else:
                             new_line[0] += part + ","
                     line = new_line
+
+                # Saving the preprocessed data as tokenized strings or lists
                 self.docs_s_tokenized.append(line[1])
                 self.docs_l_tokenized.append(line[1].split(' '))
                 self.preprocessed_data[line[0]] = {
