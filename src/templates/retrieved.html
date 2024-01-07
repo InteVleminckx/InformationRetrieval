@@ -93,9 +93,6 @@
     document.getElementById('page_title').innerText = 'Retrieved titles by the different retrieval methods for title ' +
         '\'' + flaskData.title + '\''
 
-    console.log(gt)
-
-    console.log(flaskData);
     for (let i = 0; i < flaskData.vms_res.length; i++) {
         let title_VSM = flaskData.vms_res[i];
         if (gt.hasOwnProperty(title_VSM)) {
@@ -113,10 +110,6 @@
         }else{bodyTable += `<td onclick="select_title(this)" class="row-item">${title_BERT}</td>` + '</tr>'}
     }
     document.getElementById('comparison_table').innerHTML = bodyTable;
-
-
-
-    console.log(flaskData.vsm_eval)
 
     document.getElementById('recall_VSM').innerText = flaskData.vsm_eval.recall
     document.getElementById('p_VSM').innerText = flaskData.vsm_eval.precision

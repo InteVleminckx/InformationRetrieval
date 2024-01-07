@@ -25,8 +25,8 @@ bert = BERT(data_preprocessor)
 @app.route('/retrieval', methods=['POST'])
 def statistics():
     """
-
-    :return:
+    This flask rout runs the 3 different retrieval methods on the received query title and redirects to the retrieved page.
+    :return: redirect
     """
     global data_preprocessor, vsm, bm25, bert
 
@@ -55,8 +55,9 @@ def statistics():
 @app.route('/retrieved/')
 def retrieved():
     """
-
-    :return:
+    This fask route renders the retrieved page. Before rendering it runs the evaluation method on the top-k
+    retrieved by each retrieval method. The evaluation metrics are necessary for the retrieved page.
+    :return: rendered template
     """
     global ground_truth_labels
     data_set = data_preprocessor.data_set
@@ -92,8 +93,8 @@ def retrieved():
 @app.route('/')
 def index():
     """
-
-    :return:
+    This falsk route renders the main page.
+    :return:rendered template
     """
     global data_preprocessor
     titles = copy.deepcopy(data_preprocessor.titles)
