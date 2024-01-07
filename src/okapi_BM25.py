@@ -27,11 +27,4 @@ class BM25:
 
         results = [sorted_sim[i][0] for i in  range(min(k, len(sorted_sim)))]
 
-        # Print the top k results
-        # for i in range(min(k, len(results))):
-        #     title, score = sorted_sim[i]
-            # content = self.data[title]
-            # print(f"{i + 1}) Title: {title} - Score: {score}")
-            # print(f"Content: {content}")
-
         return results
