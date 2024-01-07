@@ -1,5 +1,6 @@
 from rank_bm25 import BM25Okapi
-from src.utils import *
+
+from src.data_pre_processor import DataPreProcessor
 
 
 class BM25:
@@ -25,6 +26,4 @@ class BM25:
         # remove searched query
         sorted_sim = [item for item in sorted_sim if item[0] != title]
 
-        results = [sorted_sim[i][0] for i in  range(min(k, len(sorted_sim)))]
-
-        return results
+        return [sorted_sim[i][0] for i in range(min(k, len(sorted_sim)))]

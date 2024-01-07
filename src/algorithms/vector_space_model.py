@@ -29,6 +29,7 @@ class VSM:
         """
         This function ranks the documents based on the cosine similarity
         :param title: the title of the document
+        :param k: the length of the top results list.
         """
 
         lowered_title = title.lower()
@@ -46,13 +47,4 @@ class VSM:
         # remove searched query
         sorted_sim = [item for item in sorted_sim if item[0] != title]
 
-        results = [sorted_sim[i][0] for i in range(min(k, len(sorted_sim)))]
-
-        # Print the top k results
-        for i in range(min(k, len(results))):
-            title, score = sorted_sim[i]
-            # content = self.data[title]
-            # print(f"{i + 1}) Title: {title} - Score: {score}")
-            # print(f"Content: {content}")
-
-        return results
+        return [sorted_sim[i][0] for i in range(min(k, len(sorted_sim)))]
