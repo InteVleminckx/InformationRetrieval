@@ -90,8 +90,6 @@
     var flaskData = {{ data | tojson}};
     var gt = flaskData.gt[flaskData.title];
 
-    console.log(flaskData.gt)
-
     document.getElementById('page_title').innerText = 'Retrieved titles by the different retrieval methods for title ' +
         '\'' + flaskData.title + '\''
 
